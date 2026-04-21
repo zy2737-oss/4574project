@@ -20,5 +20,4 @@ select
     order_at,
     cast(order_at as date) as order_date,
     fivetran_synced_at
-
 from orders
