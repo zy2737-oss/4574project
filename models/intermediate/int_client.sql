@@ -1,6 +1,6 @@
 WITH temp_rank AS(
     SELECT *, ROW_NUMBER() OVER(PARTITION BY CLIENT_ID ORDER BY REQUEST_AT) row_n
-    FROM {f ref( 'base_box_requests') }}
+    FROM {f ref('base_box_requests') }}
 )
 
 SELECT
