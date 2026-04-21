@@ -1,11 +1,11 @@
-with item_base as (
+with item_views_clean as (
 
     select *
     from {{ ref('int_item_views_clean') }}
 
 ),
 
-dedup as (
+dedup_items as (
 
     select
         item_name,
@@ -14,7 +14,7 @@ dedup as (
             partition by item_name
             order by item_view_at
         ) as row_n
-    from item_base
+    from item_views_clean
     where item_name is not null
 
 )
@@ -22,5 +22,5 @@ dedup as (
 select
     item_name,
     price_per_unit
-from dedup
+from dedup_items
 where row_n = 1
