@@ -1,2 +1,2 @@
 SELECT *
-FROM {ref('int_client')}}
+FROM {{ref('int_client')}}
