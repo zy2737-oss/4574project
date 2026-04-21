@@ -6,7 +6,6 @@ with orders as (
 )
 
 select
-    fivetran_id,
     order_id,
     session_id,
     client_name,
@@ -18,7 +17,5 @@ select
     shipping_cost,
     tax_rate,
     order_at,
-    cast(order_at as date) as order_date,
-    fivetran_synced_at
-
+    cast(order_at as date) as order_date
 from orders
