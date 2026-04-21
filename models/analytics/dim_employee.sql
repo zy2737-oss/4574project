@@ -1,7 +1,7 @@
 with employee_lifecycle as (
 
     select *
-    from {{ ref('int_hr__employee_lifecycle') }}
+    from {{ ref('int_hr_employee_lifecycle') }}
 
 )
 
