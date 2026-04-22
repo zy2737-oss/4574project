@@ -1,33 +1,61 @@
-WITH hr_joins AS (
-    SELECT *
-    FROM {{ ref('stg_hr_joins') }}
+with sessions as (
+
+    select *
+    from {{ ref('stg_sessions') }}
+
 ),
 
-hr_quits AS (
-    SELECT *
-    FROM {{ ref('stg_hr_quits') }}
+orders as (
+
+    select *
+    from {{ ref('stg_orders') }}
+
 ),
 
-final AS (
-    SELECT
-        j.employee_id,
-        j.name,
-        j.title,
-        j.city,
-        j.address,
-        j.annual_salary,
-        j.hire_date,
-        q.quit_date,
-        CASE
-            WHEN q.quit_date IS NULL THEN 'active'
-            ELSE 'quit'
-        END AS employee_status,
-        CASE
-            WHEN q.quit_date IS NULL THEN FALSE
-            ELSE TRUE
-        END AS is_quit
-    FROM hr_joins j
-    LEFT JOIN hr_quits q ON j.employee_id = q.employee_id
+-- aggregate sessions → client level
+session_agg as (
+
+    select
+        client_id,
+        count(distinct session_id) as total_sessions,
+        min(session_at) as first_session_at,
+        max(session_at) as last_session_at
+    from sessions
+    group by client_id
+
+),
+
+-- aggregate orders → client level
+order_agg as (
+
+    select
+        client_name,
+        count(distinct order_id) as total_orders,
+        min(order_at) as first_order_at,
+        max(order_at) as last_order_at,
+        sum(shipping_cost) as total_shipping_cost
+    from orders
+    group by client_name
+
+),
+
+final as (
+
+    select
+        s.client_id,
+        o.client_name,
+        s.total_sessions,
+        o.total_orders,
+        s.first_session_at,
+        s.last_session_at,
+        o.first_order_at,
+        o.last_order_at,
+        o.total_shipping_cost
+
+    from session_agg s
+    left join order_agg o
+        on s.client_id = o.client_name   -- ⚠️ adjust if mismatch
+
 )
 
-SELECT * FROM final
+select * from final
