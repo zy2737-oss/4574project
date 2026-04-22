@@ -5,37 +5,32 @@ with orders as (
 
 ),
 
-final as (
+item_summary as (
 
     select
-        -- primary key
-        order_id,
-
-        -- dimensions
         session_id,
-        client_name,
-        state,
-        payment_method,
-
-        -- dates
-        order_at,
-        order_date,
-
-        -- metrics
-        coalesce(shipping_cost, 0) as shipping_cost,
-        coalesce(tax_rate, 0) as tax_rate,
-
-        -- derived metrics（如果后面有 revenue 可以扩展）
-        coalesce(shipping_cost, 0) * coalesce(tax_rate, 0) as shipping_tax_amount,
-
-        -- metadata
-        is_deleted,
-        fivetran_synced_at
-
-    from orders
-    where order_id is not null
+        sum(coalesce(add_to_cart_quantity, 0)) as total_add_to_cart_qty,
+        avg(price_per_unit) as avg_price_per_unit
+    from {{ ref('int_item_views_clean') }}
+    group by session_id
 
 )
 
-select *
-from final
+select
+    o.order_id,
+    o.session_id,
+    o.client_name,
+    o.phone,
+    o.state,
+    o.shipping_address,
+    o.payment_method,
+    o.payment_info,
+    o.shipping_cost,
+    o.tax_rate,
+    o.order_at,
+    o.order_date,
+    coalesce(i.total_add_to_cart_qty, 0) as total_add_to_cart_qty,
+    i.avg_price_per_unit
+from orders o
+left join item_summary i
+    on o.session_id = i.session_id
