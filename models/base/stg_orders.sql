@@ -1,5 +1,5 @@
 select
-    "_fivetran_id" as fivetran_id,
+    'FIVETRAN_ID' as fivetran_id,
     "TAX_RATE" as tax_rate,
     "PHONE" as phone,
     "STATE" as state,
