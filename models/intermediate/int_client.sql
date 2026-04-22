@@ -1,80 +1,70 @@
-with sessions as (
-
-    select *
-    from {{ ref('stg_sessions') }}
-
-),
-
-orders as (
+with orders as (
 
     select *
     from {{ ref('stg_orders') }}
 
 ),
 
--- aggregate sessions -> client level
-session_agg as (
+sessions as (
 
-    select
-        to_varchar(client_id) as client_id,
-        count(distinct session_id) as total_sessions,
-        min(session_at) as first_session_at,
-        max(session_at) as last_session_at
-    from sessions
-    where client_id is not null
-    group by 1
+    select *
+    from {{ ref('stg_sessions') }}
 
 ),
 
--- attach orders to client_id through session_id
 orders_with_client as (
 
     select
         to_varchar(sessions.client_id) as client_id,
         orders.client_name,
+        orders.phone,
+        orders.shipping_address,
+        orders.state,
+        orders.payment_method,
+        orders.payment_info,
         orders.order_id,
         orders.order_at,
-        orders.shipping_cost
+        orders.fivetran_synced_at
+
     from orders
     left join sessions
         on orders.session_id = sessions.session_id
+
     where sessions.client_id is not null
 
 ),
 
--- aggregate orders -> client level
-order_agg as (
+ranked_clients as (
 
     select
         client_id,
-        max(client_name) as client_name,
-        count(distinct order_id) as total_orders,
-        min(order_at) as first_order_at,
-        max(order_at) as last_order_at,
-        sum(coalesce(shipping_cost, 0)) as total_shipping_cost
+        client_name,
+        phone,
+        shipping_address,
+        state,
+        payment_method,
+        payment_info,
+        order_id,
+        order_at,
+        row_number() over (
+            partition by client_id
+            order by order_at desc, fivetran_synced_at desc
+        ) as rn
+
     from orders_with_client
-    group by 1
-
-),
-
-final as (
-
-    select
-        s.client_id,
-        o.client_name,
-        s.total_sessions,
-        coalesce(o.total_orders, 0) as total_orders,
-        s.first_session_at,
-        s.last_session_at,
-        o.first_order_at,
-        o.last_order_at,
-        coalesce(o.total_shipping_cost, 0) as total_shipping_cost
-
-    from session_agg s
-    left join order_agg o
-        on s.client_id = o.client_id
 
 )
 
-select *
-from final
+select
+    client_id,
+    client_name,
+    phone,
+    shipping_address as latest_shipping_address,
+    state as latest_state,
+    payment_method as latest_payment_method,
+    payment_info as latest_payment_info,
+    order_id as latest_order_id,
+    order_at as latest_order_at
+
+from ranked_clients
+where rn = 1
