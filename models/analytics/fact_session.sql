@@ -6,13 +6,17 @@ with sessions_raw as (
 ),
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 item_activity as (
 =======
+=======
+>>>>>>> bb7634a5c5348d6eb7162ac1a28bbd76c4491cd5
 sessions as (
 
     select
         session_id,
         max(client_id) as client_id,
+        min(session_at) as session_at,
         min(session_date) as session_date,
         max(ip) as ip,
         max(os) as os
@@ -22,8 +26,12 @@ sessions as (
 
 ),
 
+<<<<<<< HEAD
 item_views as (
 >>>>>>> 3e36fd1de233d8a50fa405a37ee842762546b718
+=======
+item_activity as (
+>>>>>>> bb7634a5c5348d6eb7162ac1a28bbd76c4491cd5
 
     select
         session_id,
