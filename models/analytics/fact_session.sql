@@ -1,7 +1,21 @@
-with sessions as (
+with sessions_raw as (
 
     select *
     from {{ ref('int_sessions_clean') }}
+
+),
+
+sessions as (
+
+    select
+        session_id,
+        max(client_id) as client_id,
+        min(session_date) as session_date,
+        max(ip) as ip,
+        max(os) as os
+    from sessions_raw
+    where session_id is not null
+    group by session_id
 
 ),
 
@@ -11,6 +25,7 @@ item_views as (
         session_id,
         count(*) as num_item_views
     from {{ ref('int_item_views_clean') }}
+    where session_id is not null
     group by session_id
 
 ),
@@ -21,6 +36,7 @@ orders as (
         session_id,
         count(*) as num_orders
     from {{ ref('int_orders_clean') }}
+    where session_id is not null
     group by session_id
 
 )
