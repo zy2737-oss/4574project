@@ -1,0 +1,73 @@
+version: 2
+
+models:
+  - name: dim_client
+    description: One row per client with the latest available client information, including the latest shipping address from their most recent order.
+    columns:
+      - name: client_id
+        description: Unique identifier for a client.
+        tests:
+          - unique
+          - not_null
+
+      - name: client_name
+        description: Client name from order records.
+
+      - name: latest_shipping_address
+        description: Most recent shipping address used by the client.
+
+      - name: latest_order_at
+        description: Timestamp of the client's most recent order.
+
+  - name: dim_employee
+    description: One row per employee with lifecycle status, hire date, quit date, job title, city, salary, and tenure information.
+    columns:
+      - name: employee_id
+        description: Unique employee identifier.
+        tests:
+          - unique
+          - not_null
+
+      - name: employee_status
+        description: Employee lifecycle status, such as active or former.
+        tests:
+          - not_null
+
+  - name: dim_item
+    description: One row per item with item-level attributes and item view or cart behavior information.
+    columns:
+      - name: item_name
+        description: Name of the item viewed or added to cart.
+
+  - name: fact_order
+    description: Order fact table with one row per order, including order timing, customer/session linkage, payment method, shipping cost, and order status.
+    columns:
+      - name: order_id
+        description: Unique order identifier.
+        tests:
+          - unique
+          - not_null
+
+      - name: order_at
+        description: Timestamp when the order was placed.
+
+  - name: fact_session
+    description: Session fact table with one row per web session, including traffic behavior, cart activity, and conversion indicators.
+    columns:
+      - name: session_id
+        description: Unique web session identifier.
+        tests:
+          - unique
+          - not_null
+
+      - name: session_at
+        description: Timestamp when the session started.
+
+  - name: daily_finances
+    description: Daily finance analytics table summarizing expenses, orders, shipping costs, and business performance by date.
+    columns:
+      - name: date
+        description: Calendar date for the daily finance metrics.
+
+      - name: total_expense_amount
+        description: Total expense amount for the date.
