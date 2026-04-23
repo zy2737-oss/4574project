@@ -5,12 +5,6 @@ with sessions_raw as (
 
 ),
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-item_activity as (
-=======
-=======
->>>>>>> bb7634a5c5348d6eb7162ac1a28bbd76c4491cd5
 sessions as (
 
     select
@@ -26,12 +20,7 @@ sessions as (
 
 ),
 
-<<<<<<< HEAD
-item_views as (
->>>>>>> 3e36fd1de233d8a50fa405a37ee842762546b718
-=======
 item_activity as (
->>>>>>> bb7634a5c5348d6eb7162ac1a28bbd76c4491cd5
 
     select
         session_id,
@@ -63,33 +52,27 @@ select
     s.session_date,
     s.ip,
     s.os,
-
     coalesce(ia.num_item_view_events, 0) as num_item_view_events,
     coalesce(ia.num_distinct_items_viewed, 0) as num_distinct_items_viewed,
     coalesce(ia.total_add_to_cart_qty, 0) as total_add_to_cart_qty,
     coalesce(ia.total_remove_from_cart_qty, 0) as total_remove_from_cart_qty,
     coalesce(o.num_orders, 0) as num_orders,
-
     case
         when coalesce(ia.num_item_view_events, 0) > 0 then 1
         else 0
     end as has_item_view,
-
     case
         when coalesce(ia.total_add_to_cart_qty, 0) > 0 then 1
         else 0
     end as has_add_to_cart,
-
     case
         when coalesce(ia.total_remove_from_cart_qty, 0) > 0 then 1
         else 0
     end as has_remove_from_cart,
-
     case
         when coalesce(o.num_orders, 0) > 0 then 1
         else 0
     end as has_order
-
 from sessions s
 left join item_activity ia
     on s.session_id = ia.session_id
