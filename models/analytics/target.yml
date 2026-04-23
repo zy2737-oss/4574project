@@ -1,9 +1,26 @@
 version: 2
 
 models:
+  - name: daily_finances
+    description: Daily finance summary table showing total orders, revenue, shipping cost, tax cost, total cost, and profit for each plant project.
+
   - name: dim_client
+    description: Dimension table containing the latest client information, including client ID, client name, phone number, shipping address, state, and latest payment method.
+
     columns:
       - name: client_id
-        data_tests:
+        tests:
           - unique
           - not_null
+          
+  - name: dim_employee
+    description: Dimension table containing employee lifecycle information, including employee details, salary, employment status, tenure, hire date, and quit date.
+
+  - name: dim_item
+    description: Dimension table containing product information, including item name and price per unit.
+
+  - name: fact_order
+    description: Fact table containing detailed order transaction records, including order ID, client information, session details, payment information, shipping cost, tax rate, and order timestamps.
+
+  - name: fact_session
+    description: Fact table containing session-level user behavior data, including client activity, item views, order activity, session date, session ID, operating system, and IP information.
