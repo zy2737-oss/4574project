@@ -1,2 +1,2 @@
 select *
-from {{ source('web_schema', 'SESSIONS') }}
+from {{ source('web_schema', 'sessions') }}

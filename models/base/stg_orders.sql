@@ -13,5 +13,5 @@ select
     "PAYMENT_INFO" as payment_info,
     "_fivetran_deleted" as is_deleted,
     "_fivetran_synced" as fivetran_synced_at
-from {{ source('web_schema', 'ORDERS') }}
+from {{ source('web_schema', 'orders') }}
 where "_fivetran_deleted" = false
