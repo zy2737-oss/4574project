@@ -6,93 +6,86 @@ sources:
     schema: GOOGLE_DRIVE_LOAD
     tables:
       - name: EXPENSES
-        config:
-          freshness:
-            warn_after:
-              count: 3
-              period: day
-            error_after:
-              count: 3
-              period: day
-          loaded_at_field: _FIVETRAN_SYNCED
+        loaded_at_field: _FIVETRAN_SYNCED
+        freshness:
+          warn_after:
+            count: 3
+            period: day
+          error_after:
+            count: 3
+            period: day
 
       - name: HR_JOINS
-        config:
-          freshness:
-            warn_after:
-              count: 3
-              period: day
-            error_after:
-              count: 3
-              period: day
-          loaded_at_field: _FIVETRAN_SYNCED
+        loaded_at_field: _FIVETRAN_SYNCED
+        freshness:
+          warn_after:
+            count: 3
+            period: day
+          error_after:
+            count: 3
+            period: day
 
       - name: HR_QUITS
-        config:
-          freshness:
-            warn_after:
-              count: 3
-              period: day
-            error_after:
-              count: 3
-              period: day
-          loaded_at_field: _FIVETRAN_SYNCED
+        loaded_at_field: _FIVETRAN_SYNCED
+        freshness:
+          warn_after:
+            count: 3
+            period: day
+          error_after:
+            count: 3
+            period: day
 
       - name: RETURNS
-        config:
-          freshness:
-            warn_after:
-              count: 3
-              period: day
-            error_after:
-              count: 3
-              period: day
-          loaded_at_field: _FIVETRAN_SYNCED
+        loaded_at_field: _FIVETRAN_SYNCED
+        freshness:
+          warn_after:
+            count: 3
+            period: day
+          error_after:
+            count: 3
+            period: day
 
   - name: web_schema
     database: LOAD
     schema: WEB_SCHEMA
     tables:
       - name: ITEM_VIEWS
-        config:
-          freshness:
-            warn_after:
-              count: 3
-              period: day
-            error_after:
-              count: 3
-              period: day
-          loaded_at_field: _FIVETRAN_SYNCED
+        loaded_at_field: _FIVETRAN_SYNCED
+        freshness:
+          warn_after:
+            count: 3
+            period: day
+          error_after:
+            count: 3
+            period: day
 
       - name: ORDERS
-        config:
-          freshness:
-            warn_after:
-              count: 3
-              period: day
-            error_after:
-              count: 3
-              period: day
-          loaded_at_field: _FIVETRAN_SYNCED
+        loaded_at_field: _FIVETRAN_SYNCED
+        freshness:
+          warn_after:
+            count: 3
+            period: day
+          error_after:
+            count: 3
+            period: day
 
       - name: PAGE_VIEWS
-        config:
-          freshness:
-            warn_after:
-              count: 3
-              period: day
-            error_after:
-              count: 3
-              period: day
-          loaded_at_field: _FIVETRAN_SYNCED
+        loaded_at_field: _FIVETRAN_SYNCED
+        freshness:
+          warn_after:
+            count: 3
+            period: day
+          error_after:
+            count: 3
+            period: day
 
       - name: SESSIONS
-        config:
-          freshness:
-            warn_after:
-              count: 3
-              period: day
-            error_after:
-              count: 3
-              period: day
-          loaded_at_field: _FIVETRAN_SYNCED
+        loaded_at_field: _FIVETRAN_SYNCED
+        freshness:
+          warn_after:
+            count: 3
+            period: day
+          error_after:
+            count: 3
+            period: day
+            
