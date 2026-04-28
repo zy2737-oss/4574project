@@ -1,2 +1,2 @@
 select *
-from {{ source('web_schema', 'ITEM_VIEWS') }}
+from {{ source('web_schema', 'item_views') }}

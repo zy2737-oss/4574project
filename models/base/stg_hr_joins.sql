@@ -2,7 +2,7 @@
 with source as (
 
     select *
-    from {{ source('google_drive_load', 'HR_JOINS') }}
+    from {{ source('google_drive_load', 'hr_joins') }}
 
 ),
 
