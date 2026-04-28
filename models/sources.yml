@@ -9,10 +9,10 @@ sources:
         config:
           freshness:
             warn_after:
-              count: 30
+              count: 3
               period: day
             error_after:
-              count: 60
+              count: 3
               period: day
           loaded_at_field: _FIVETRAN_SYNCED
 
@@ -20,10 +20,10 @@ sources:
         config:
           freshness:
             warn_after:
-              count: 30
+              count: 3
               period: day
             error_after:
-              count: 60
+              count: 3
               period: day
           loaded_at_field: _FIVETRAN_SYNCED
 
@@ -31,10 +31,10 @@ sources:
         config:
           freshness:
             warn_after:
-              count: 30
+              count: 3
               period: day
             error_after:
-              count: 60
+              count: 3
               period: day
           loaded_at_field: _FIVETRAN_SYNCED
 
@@ -42,10 +42,10 @@ sources:
         config:
           freshness:
             warn_after:
-              count: 30
+              count: 3
               period: day
             error_after:
-              count: 60
+              count: 3
               period: day
           loaded_at_field: _FIVETRAN_SYNCED
 
@@ -57,10 +57,10 @@ sources:
         config:
           freshness:
             warn_after:
-              count: 30
+              count: 3
               period: day
             error_after:
-              count: 60
+              count: 3
               period: day
           loaded_at_field: _FIVETRAN_SYNCED
 
@@ -68,10 +68,10 @@ sources:
         config:
           freshness:
             warn_after:
-              count: 30
+              count: 3
               period: day
             error_after:
-              count: 60
+              count: 3
               period: day
           loaded_at_field: _FIVETRAN_SYNCED
 
@@ -79,10 +79,10 @@ sources:
         config:
           freshness:
             warn_after:
-              count: 30
+              count: 3
               period: day
             error_after:
-              count: 60
+              count: 3
               period: day
           loaded_at_field: _FIVETRAN_SYNCED
 
@@ -90,9 +90,9 @@ sources:
         config:
           freshness:
             warn_after:
-              count: 30
+              count: 3
               period: day
             error_after:
-              count: 60
+              count: 3
               period: day
           loaded_at_field: _FIVETRAN_SYNCED
