@@ -39,6 +39,23 @@ revenue_by_session as (
 
 ),
 
+returns_by_date as (
+ 
+    select
+        o.returned_at                                               as return_date,
+        sum(
+            (coalesce(iv.add_to_cart_quantity, 0) - coalesce(iv.remove_from_cart_quantity, 0))
+            * coalesce(iv.price_per_unit, 0)
+        )                                                           as total_returns
+    from orders o
+    inner join item_views iv
+        on o.session_id = iv.session_id
+    where o.is_refunded = true
+      and o.returned_at is not null
+    group by o.returned_at
+ 
+),
+
 order_dates as (
 
     select distinct order_date
@@ -67,6 +84,9 @@ final as (
         o.order_date,
         count(distinct o.order_id)                                   as total_orders,
         sum(coalesce(r.revenue, 0))                                  as total_revenue,
+        max(coalesce(ret.total_returns, 0))                          as total_refund,
+        sum(coalesce(r.revenue, 0))
+            - max(coalesce(ret.total_returns, 0))                    as net_revenue,
         sum(coalesce(o.shipping_cost, 0))                            as total_shipping_cost,
         sum(coalesce(r.revenue, 0) * coalesce(o.tax_rate, 0))        as total_tax_cost,
 
@@ -95,6 +115,8 @@ final as (
     from orders o
     left join revenue_by_session r
         on o.session_id = r.session_id
+    left join returns_by_date ret
+        on o.order_date = ret.return_date
     left join daily_salary ds
         on o.order_date = ds.order_date
     left join expenses ex
