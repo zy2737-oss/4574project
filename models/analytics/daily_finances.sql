@@ -39,23 +39,22 @@ revenue_by_session as (
 
 ),
 
+-- Refund amounts grouped by the date the return happened (returned_at).
 returns_by_date as (
- 
+
     select
-        o.returned_at                                               as return_date,
-        sum(
-            (coalesce(iv.add_to_cart_quantity, 0) - coalesce(iv.remove_from_cart_quantity, 0))
-            * coalesce(iv.price_per_unit, 0)
-        )                                                           as total_returns
+        cast(o.returned_at as date)     as return_date,
+        sum(coalesce(r.revenue, 0))     as total_returns
     from orders o
-    inner join item_views iv
-        on o.session_id = iv.session_id
+    inner join revenue_by_session r
+        on o.session_id = r.session_id
     where o.is_refunded = true
       and o.returned_at is not null
-    group by o.returned_at
- 
+    group by cast(o.returned_at as date)
+
 ),
 
+-- Distinct order dates to drive salary cross-join.
 order_dates as (
 
     select distinct order_date
@@ -64,7 +63,7 @@ order_dates as (
 
 ),
 
--- Daily salary cost: prorate each active employee's annual salary by day
+-- Daily salary: prorate annual salary by day for all active employees.
 daily_salary as (
 
     select
@@ -82,35 +81,39 @@ final as (
 
     select
         o.order_date,
-        count(distinct o.order_id)                                   as total_orders,
-        sum(coalesce(r.revenue, 0))                                  as total_revenue,
-        max(coalesce(ret.total_returns, 0))                          as total_refund,
+        count(distinct o.order_id)                                        as total_orders,
+
+        -- Revenue side
+        -- gross_revenue = price * quantity + tax
         sum(coalesce(r.revenue, 0))
-            - max(coalesce(ret.total_returns, 0))                    as net_revenue,
-        sum(coalesce(o.shipping_cost, 0))                            as total_shipping_cost,
-        sum(coalesce(r.revenue, 0) * coalesce(o.tax_rate, 0))        as total_tax_cost,
-
-        max(coalesce(ds.total_daily_salary, 0))                      as total_salary_cost,
-        max(coalesce(ex.hr_expenses, 0))                             as total_hr_expenses,
-        max(coalesce(ex.warehouse_expenses, 0))                      as total_warehouse_expenses,
-        max(coalesce(ex.tech_tool_expenses, 0))                      as total_tech_tool_expenses,
-        max(coalesce(ex.other_expenses, 0))                          as total_other_expenses,
-        max(coalesce(ex.total_daily_expenses, 0))                    as total_operating_expenses,
-
-        -- Total cost: shipping + tax + salary + all operating expense categories
-        sum(coalesce(o.shipping_cost, 0))
+            + sum(coalesce(r.revenue, 0) * coalesce(o.tax_rate, 0))      as gross_revenue,
+        max(coalesce(ret.total_returns, 0))                               as total_returns,
+        -- net_revenue = gross_revenue - refunds
+        sum(coalesce(r.revenue, 0))
             + sum(coalesce(r.revenue, 0) * coalesce(o.tax_rate, 0))
-            + max(coalesce(ds.total_daily_salary, 0))
-            + max(coalesce(ex.total_daily_expenses, 0))              as total_cost,
+            - max(coalesce(ret.total_returns, 0))                         as net_revenue,
 
-        -- Profit deducts all cost components from revenue
+        -- Cost side: shipping + salary + operating expenses
+        sum(coalesce(o.shipping_cost, 0))                                 as total_shipping_cost,
+        max(coalesce(ds.total_daily_salary, 0))                           as total_salary_cost,
+        max(coalesce(ex.hr_expenses, 0))                                  as total_hr_expenses,
+        max(coalesce(ex.warehouse_expenses, 0))                           as total_warehouse_expenses,
+        max(coalesce(ex.tech_tool_expenses, 0))                           as total_tech_tool_expenses,
+        max(coalesce(ex.other_expenses, 0))                               as total_other_expenses,
+        max(coalesce(ex.total_daily_expenses, 0))                         as total_operating_expenses,
+        sum(coalesce(o.shipping_cost, 0))
+            + max(coalesce(ds.total_daily_salary, 0))
+            + max(coalesce(ex.total_daily_expenses, 0))                   as total_cost,
+
+        -- Profit = net_revenue - total_cost
         sum(coalesce(r.revenue, 0))
+            + sum(coalesce(r.revenue, 0) * coalesce(o.tax_rate, 0))
+            - max(coalesce(ret.total_returns, 0))
             - (
                 sum(coalesce(o.shipping_cost, 0))
-                + sum(coalesce(r.revenue, 0) * coalesce(o.tax_rate, 0))
                 + max(coalesce(ds.total_daily_salary, 0))
                 + max(coalesce(ex.total_daily_expenses, 0))
-            )                                                        as profit
+            )                                                             as profit
 
     from orders o
     left join revenue_by_session r
